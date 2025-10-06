@@ -1,0 +1,13 @@
+// Estilos simples sin interferir con Material Design
+:host {
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+  
+  // Estilos para mejorar la apariencia general
+  .mat-mdc-raised-button {
+    border-radius: 8px;
+    text-transform: none;
+    font-weight: 500;
+  }
+}

@@ -1,0 +1,190 @@
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <mat-toolbar class="bg-white shadow-sm">
+        <button mat-icon-button routerLink="/dashboard">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="flex-1 text-xl font-semibold">Mis Citas</span>
+        <button mat-raised-button color="primary" (click)="addNewAppointment()">
+            <mat-icon class="mr-2">add</mat-icon>
+            Nueva Cita
+        </button>
+    </mat-toolbar>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="flex justify-center items-center py-12">
+            <mat-icon class="animate-spin text-4xl text-veterinary-primary">refresh</mat-icon>
+            <span class="ml-3 text-gray-600">Cargando citas...</span>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <strong class="font-bold">Error:</strong>
+            <span class="block sm:inline ml-1">{{error}}</span>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && !error && allAppointments.length === 0" class="text-center py-12">
+            <mat-icon class="text-6xl text-gray-400 mb-4">event</mat-icon>
+            <h3 class="text-xl font-medium text-gray-900 mb-2">No tienes citas programadas</h3>
+            <p class="text-gray-500 mb-6">Agenda tu primera cita veterinaria</p>
+            <button mat-raised-button color="primary" (click)="addNewAppointment()">
+                <mat-icon class="mr-2">add</mat-icon>
+                Agendar Primera Cita
+            </button>
+        </div>
+
+        <!-- Appointments Tabs -->
+        <div *ngIf="!loading && !error && allAppointments.length > 0">
+            <mat-tab-group class="appointment-tabs">
+
+                <!-- Próximas Citas -->
+                <mat-tab label="Próximas">
+                    <div class="pt-6">
+                        <div *ngIf="upcomingAppointments.length === 0" class="text-center py-8">
+                            <mat-icon class="text-4xl text-gray-400 mb-2">event_available</mat-icon>
+                            <p class="text-gray-500">No hay citas próximas</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                            *ngIf="upcomingAppointments.length > 0">
+                            <mat-card *ngFor="let appointment of upcomingAppointments" class="appointment-card">
+                                <mat-card-header>
+                                    <div mat-card-avatar class="appointment-avatar">
+                                        <mat-icon>event</mat-icon>
+                                    </div>
+                                    <mat-card-title>{{getServiceTypeText(appointment.serviceType)}}</mat-card-title>
+                                    <mat-card-subtitle>{{appointment.appointmentDate |
+                                        date:'medium'}}</mat-card-subtitle>
+                                </mat-card-header>
+
+                                <mat-card-content class="pt-4">
+                                    <div class="space-y-2">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm text-gray-600">Estado:</span>
+                                            <mat-chip [color]="getStatusColor(appointment.status)">
+                                                {{getStatusText(appointment.status)}}
+                                            </mat-chip>
+                                        </div>
+
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm text-gray-600">Mascota:</span>
+                                            <span class="text-sm font-medium">{{getPetName(appointment.pet)}}</span>
+                                        </div>
+
+                                        <div *ngIf="appointment.reason" class="flex items-start justify-between">
+                                            <span class="text-sm text-gray-600">Motivo:</span>
+                                            <span
+                                                class="text-sm font-medium text-right flex-1 ml-2">{{appointment.reason}}</span>
+                                        </div>
+
+                                        <div *ngIf="appointment.price" class="flex items-center justify-between">
+                                            <span class="text-sm text-gray-600">Precio:</span>
+                                            <span
+                                                class="text-sm font-medium text-green-600">${{appointment.price}}</span>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+
+                                <mat-card-actions class="flex justify-end space-x-2">
+                                    <button mat-button (click)="viewAppointment(appointment)">
+                                        <mat-icon>visibility</mat-icon>
+                                        Ver
+                                    </button>
+                                    <button mat-button color="primary" (click)="editAppointment(appointment)"
+                                        *ngIf="appointment.status === 'pending'">
+                                        <mat-icon>edit</mat-icon>
+                                        Editar
+                                    </button>
+                                </mat-card-actions>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Citas Pendientes -->
+                <mat-tab label="Pendientes">
+                    <div class="pt-6">
+                        <div *ngIf="pendingAppointments.length === 0" class="text-center py-8">
+                            <mat-icon class="text-4xl text-gray-400 mb-2">pending</mat-icon>
+                            <p class="text-gray-500">No hay citas pendientes de confirmación</p>
+                        </div>
+
+                        <div class="space-y-4" *ngIf="pendingAppointments.length > 0">
+                            <mat-card *ngFor="let appointment of pendingAppointments" class="appointment-list-item">
+                                <mat-card-content>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="appointment-icon">
+                                                <mat-icon>schedule</mat-icon>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-medium">{{getServiceTypeText(appointment.serviceType)}}
+                                                </h3>
+                                                <p class="text-sm text-gray-600">{{appointment.appointmentDate |
+                                                    date:'medium'}}</p>
+                                                <p class="text-sm text-gray-500">Mascota:
+                                                    {{getPetName(appointment.pet)}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <mat-chip color="accent">{{getStatusText(appointment.status)}}</mat-chip>
+                                            <button mat-icon-button (click)="viewAppointment(appointment)">
+                                                <mat-icon>chevron_right</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+
+                <!-- Historial -->
+                <mat-tab label="Historial">
+                    <div class="pt-6">
+                        <div *ngIf="pastAppointments.length === 0" class="text-center py-8">
+                            <mat-icon class="text-4xl text-gray-400 mb-2">history</mat-icon>
+                            <p class="text-gray-500">No hay citas en el historial</p>
+                        </div>
+
+                        <div class="space-y-4" *ngIf="pastAppointments.length > 0">
+                            <mat-card *ngFor="let appointment of pastAppointments" class="appointment-list-item">
+                                <mat-card-content>
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-4">
+                                            <div class="appointment-icon past">
+                                                <mat-icon>history</mat-icon>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-medium">{{getServiceTypeText(appointment.serviceType)}}
+                                                </h3>
+                                                <p class="text-sm text-gray-600">{{appointment.appointmentDate |
+                                                    date:'medium'}}</p>
+                                                <p class="text-sm text-gray-500">Mascota:
+                                                    {{getPetName(appointment.pet)}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <mat-chip [color]="getStatusColor(appointment.status)">
+                                                {{getStatusText(appointment.status)}}
+                                            </mat-chip>
+                                            <button mat-icon-button (click)="viewAppointment(appointment)">
+                                                <mat-icon>chevron_right</mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </mat-card-content>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

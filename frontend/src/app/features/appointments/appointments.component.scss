@@ -1,0 +1,55 @@
+.appointment-avatar {
+  background-color: var(--mat-primary-50, #e3f2fd);
+  color: var(--mat-primary-500, #2196f3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.appointment-card {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.appointment-list-item {
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.appointment-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--mat-primary-100, #bbdefb);
+  color: var(--mat-primary-600, #1976d2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.past {
+    background-color: var(--mat-grey-200, #eeeeee);
+    color: var(--mat-grey-600, #757575);
+  }
+}
+
+.appointment-tabs {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

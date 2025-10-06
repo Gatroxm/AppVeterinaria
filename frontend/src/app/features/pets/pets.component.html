@@ -1,0 +1,152 @@
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <mat-toolbar class="bg-white shadow-sm">
+        <button mat-icon-button routerLink="/dashboard">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="flex-1 text-xl font-semibold">Mis Mascotas</span>
+        <button mat-raised-button color="primary" (click)="addNewPet()">
+            <mat-icon class="mr-2">add</mat-icon>
+            Nueva Mascota
+        </button>
+    </mat-toolbar>
+
+    <!-- Content -->
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+
+        <!-- Loading State -->
+        <div *ngIf="loading" class="flex justify-center items-center py-12">
+            <mat-icon class="animate-spin text-4xl text-veterinary-primary">refresh</mat-icon>
+            <span class="ml-3 text-gray-600">Cargando mascotas...</span>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error && !loading" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            <strong class="font-bold">Error:</strong>
+            <span class="block sm:inline ml-1">{{error}}</span>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && !error && pets.length === 0" class="text-center py-12">
+            <mat-icon class="text-6xl text-gray-400 mb-4">pets</mat-icon>
+            <h3 class="text-xl font-medium text-gray-900 mb-2">No tienes mascotas registradas</h3>
+            <p class="text-gray-500 mb-6">Comienza agregando tu primera mascota</p>
+            <button mat-raised-button color="primary" (click)="addNewPet()">
+                <mat-icon class="mr-2">add</mat-icon>
+                Agregar Primera Mascota
+            </button>
+        </div>
+
+        <!-- Pets Grid -->
+        <div *ngIf="!loading && !error && pets.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <mat-card *ngFor="let pet of pets" class="hover:shadow-lg transition-shadow cursor-pointer">
+                <mat-card-header>
+                    <div mat-card-avatar class="pet-avatar">
+                        <mat-icon class="text-2xl">{{getPetIcon(pet.species)}}</mat-icon>
+                    </div>
+                    <mat-card-title>{{pet.name}}</mat-card-title>
+                    <mat-card-subtitle>{{pet.breed || pet.species | titlecase}}</mat-card-subtitle>
+                </mat-card-header>
+
+                <mat-card-content class="pt-4">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Especie:</span>
+                            <mat-chip [color]="getSpeciesColor(pet.species)">
+                                {{pet.species | titlecase}}
+                            </mat-chip>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Edad:</span>
+                            <span class="text-sm font-medium">{{getPetAge(pet.dateOfBirth)}}</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Peso:</span>
+                            <span class="text-sm font-medium">{{pet.weight || 'N/A'}} kg</span>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Género:</span>
+                            <span class="text-sm font-medium">{{pet.gender | titlecase}}</span>
+                        </div>
+
+                        <div *ngIf="pet.color" class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Color:</span>
+                            <span class="text-sm font-medium">{{pet.color}}</span>
+                        </div>
+                    </div>
+                </mat-card-content>
+
+                <mat-card-actions class="flex justify-end space-x-2">
+                    <button mat-button (click)="viewPet(pet)">
+                        <mat-icon>visibility</mat-icon>
+                        Ver
+                    </button>
+                    <button mat-button color="primary" (click)="editPet(pet)">
+                        <mat-icon>edit</mat-icon>
+                        Editar
+                    </button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+
+        <!-- Table View (Alternative - uncomment if preferred) -->
+        <!--
+    <div *ngIf="!loading && !error && pets.length > 0" class="bg-white rounded-lg shadow overflow-hidden">
+      <table mat-table [dataSource]="pets" class="w-full">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Nombre</th>
+          <td mat-cell *matCellDef="let pet">
+            <div class="flex items-center">
+              <mat-icon class="mr-3 text-veterinary-primary">{{getPetIcon(pet.species)}}</mat-icon>
+              {{pet.name}}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="species">
+          <th mat-header-cell *matHeaderCellDef>Especie</th>
+          <td mat-cell *matCellDef="let pet">
+            <mat-chip [color]="getSpeciesColor(pet.species)">{{pet.species | titlecase}}</mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="breed">
+          <th mat-header-cell *matHeaderCellDef>Raza</th>
+          <td mat-cell *matCellDef="let pet">{{pet.breed || 'N/A'}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="age">
+          <th mat-header-cell *matHeaderCellDef>Edad</th>
+          <td mat-cell *matCellDef="let pet">{{getPetAge(pet.dateOfBirth)}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="weight">
+          <th mat-header-cell *matHeaderCellDef>Peso</th>
+          <td mat-cell *matCellDef="let pet">{{pet.weight || 'N/A'}} kg</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let pet">
+            <button mat-icon-button (click)="viewPet(pet)" matTooltip="Ver detalles">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button (click)="editPet(pet)" matTooltip="Editar">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="createMedicalRecord(pet)" matTooltip="Nueva Historia Clínica">
+              <mat-icon>medical_services</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+    -->
+    </div>
+</div>

@@ -1,0 +1,189 @@
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <mat-icon class="text-veterinary-primary mr-2">pets</mat-icon>
+                    <h1 class="text-2xl font-bold text-gray-900">VeterinaryApp</h1>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-700">Bienvenido, {{currentUser?.name}}</span>
+                    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+                        <mat-icon>account_circle</mat-icon>
+                    </button>
+                    <mat-menu #userMenu="matMenu">
+                        <button mat-menu-item routerLink="/profile">
+                            <mat-icon>person</mat-icon>
+                            Perfil
+                        </button>
+                        <button mat-menu-item routerLink="/settings">
+                            <mat-icon>settings</mat-icon>
+                            Configuración
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button mat-menu-item (click)="logout()">
+                            <mat-icon>logout</mat-icon>
+                            Cerrar Sesión
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- User Info Card -->
+        <div class="bg-white rounded-lg shadow p-4 mb-6">
+            <h3 class="text-sm font-medium text-gray-900 mb-2">Información del Usuario</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                <div>
+                    <span class="font-medium">Nombre:</span> {{currentUser?.name || 'No disponible'}}
+                </div>
+                <div>
+                    <span class="font-medium">Email:</span> {{currentUser?.email || 'No disponible'}}
+                </div>
+                <div>
+                    <span class="font-medium">Rol:</span>
+                    <span
+                        [class]="currentUser?.role === 'veterinarian' ? 'text-green-600 font-semibold' : 'text-red-600'">
+                        {{currentUser?.role || 'No disponible'}}
+                        <span *ngIf="currentUser?.role !== 'veterinarian'" class="text-red-500">
+                            (⚠️ Requiere rol 'veterinarian' para crear historias clínicas)
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <mat-icon>pets</mat-icon>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Mis Mascotas</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{stats.pets || 0}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 text-green-600">
+                        <mat-icon>event</mat-icon>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Citas Pendientes</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{stats.pendingAppointments || 0}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                        <mat-icon>medical_services</mat-icon>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Próximas Vacunas</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{stats.upcomingVaccinations || 0}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                        <mat-icon>history</mat-icon>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-500">Historial Médico</p>
+                        <p class="text-2xl font-semibold text-gray-900">{{stats.medicalRecords || 0}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Mis Mascotas -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Mis Mascotas</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div *ngFor="let pet of recentPets"
+                            class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
+                                    <mat-icon>{{getPetIcon(pet.species)}}</mat-icon>
+                                </div>
+                                <div class="ml-4">
+                                    <p class="font-medium text-gray-900">{{pet.name}}</p>
+                                    <p class="text-sm text-gray-500">{{pet.breed || pet.species}}</p>
+                                </div>
+                            </div>
+                            <button mat-icon-button>
+                                <mat-icon>chevron_right</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-6 space-y-2">
+                        <button mat-raised-button color="primary" class="w-full" (click)="navigateToAddPet()">
+                            <mat-icon class="mr-2">add</mat-icon>
+                            Agregar Mascota
+                        </button>
+                        <button mat-stroked-button class="w-full" (click)="navigateToAllPets()">
+                            <mat-icon class="mr-2">pets</mat-icon>
+                            Ver Todas las Mascotas
+                        </button>
+                        <button mat-stroked-button class="w-full" (click)="navigateToMedicalRecords()">
+                            <mat-icon class="mr-2">history</mat-icon>
+                            Historias Clínicas
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Próximas Citas -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900">Próximas Citas</h3>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div *ngFor="let appointment of upcomingAppointments"
+                            class="p-4 border border-gray-200 rounded-lg">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-medium text-gray-900">{{appointment.serviceType | titlecase}}</p>
+                                    <p class="text-sm text-gray-500">{{appointment.appointmentDate | date:'short'}}</p>
+                                    <p class="text-sm text-gray-600">Mascota: {{getPetName(appointment.pet)}}</p>
+                                </div>
+                                <mat-chip [color]="getStatusColor(appointment.status)">
+                                    {{appointment.status | titlecase}}
+                                </mat-chip>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-6 space-y-2">
+                        <button mat-raised-button color="accent" class="w-full" (click)="navigateToAddAppointment()">
+                            <mat-icon class="mr-2">add</mat-icon>
+                            Agendar Cita
+                        </button>
+                        <button mat-stroked-button class="w-full" (click)="navigateToAllAppointments()">
+                            <mat-icon class="mr-2">event</mat-icon>
+                            Ver Todas las Citas
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

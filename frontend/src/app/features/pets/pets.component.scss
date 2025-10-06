@@ -1,0 +1,24 @@
+.pet-avatar {
+  background-color: var(--mat-primary-50, #e3f2fd);
+  color: var(--mat-primary-500, #2196f3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+mat-card {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

@@ -1,13 +1,23 @@
-# 🏥 Sistema de Gestión Veterinaria
+# 🐾 App Veterinaria
+*Plataforma Integral de Gestión Veterinaria*
 
-[![GitHub license](https://img.shields.io/github/license/Gatroxm/AppVeterinaria)](https://github.com/Gatroxm/AppVeterinaria/blob/master/LICENSE)
+<div align="center">
+
+![Status](https://img.shields.io/badge/Status-Completado-brightgreen?style=for-the-badge)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![Angular Version](https://img.shields.io/badge/angular-17.0-red)](https://angular.io/)
 [![TypeScript](https://img.shields.io/badge/typescript-5.0-blue)](https://www.typescriptlang.org/)
 [![MongoDB](https://img.shields.io/badge/mongodb-7.0-green)](https://www.mongodb.com/)
 
-> Sistema completo de gestión veterinaria desarrollado con **Node.js + TypeScript** y **Angular 17**. 
-> Incluye autenticación JWT, roles de usuario, gestión de mascotas, citas médicas e historiales clínicos.
+</div>
+
+---
+
+## 📋 Descripción
+
+**App Veterinaria** es una plataforma completa desarrollada específicamente para clínicas veterinarias que buscan optimizar su gestión diaria. El sistema integra la administración de mascotas, propietarios, citas médicas, historiales clínicos y control de tratamientos en una interfaz moderna e intuitiva.
+
+> 💡 **Desarrollado con Node.js + TypeScript y Angular 17**, incluye autenticación JWT, sistema de roles, gestión completa de mascotas y módulo de reportes analíticos.
 
 ## ⚡ Inicio Rápido
 
